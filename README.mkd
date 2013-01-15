@@ -1,0 +1,13 @@
+# README
+
+These tutorial are "loose" haskell ports of those available at http://www.opengl-tutorial.org/
+
+"Loose", because :
+
+- They use OpenGL 3.1, instead of the original 3.3 (the laptop I'm using only has an Intel HD3000 chipset).
+- When Haskell allows me to take shortcuts (i.e. reduce the verbosity), then I do take them.
+
+# TODO
+
+Cabalize it up.
+
