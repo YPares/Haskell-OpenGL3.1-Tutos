@@ -1,6 +1,6 @@
 # README
 
-These tutorial are "loose" haskell ports of those available at http://www.opengl-tutorial.org/
+These tutorials are "loose" haskell ports of those available at http://www.opengl-tutorial.org
 
 "Loose", because :
 
