@@ -98,9 +98,12 @@ vec3 x y z = x:.y:.z:.()
 
 mvpMatrix :: Mat44 GLfloat
 mvpMatrix = projection `multmm` view `multmm` model
-  where projection = perspective 0.1 100 (pi/4) (4/3)
-        view       = rotationLookAt (vec3 0 1 0) (vec3 4 3 3) (vec3 0 0 0)
+  where projection = perspective 0.1 100 (pi/2) (4/3)
+        view       = lookAt (vec3 0 1 0) (vec3 4 3 3) (vec3 0 0 0)
         model      = identity
+        
+lookAt :: Floating a => Vec3 a -> Vec3 a -> Vec3 a -> Mat44 a
+lookAt up' pos target = multmm (rotationLookAt up' pos target) (translation (-pos))
 
 main = do
   let ?log = putStrLn
