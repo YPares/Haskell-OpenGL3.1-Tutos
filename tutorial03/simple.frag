@@ -1,15 +1,13 @@
 #version 140
 
 // Ouput data
-out vec3 color;
+in vec3 fragmentColor;
 
-varying vec3 fragmentColor;
+out vec3 finalColor;
 
 void main()
 {
 
-	// Output color = red 
-	//color = vec3(1,0,0);
-  color = fragmentColor;
+  finalColor = fragmentColor;
 
 }

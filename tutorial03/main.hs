@@ -61,7 +61,7 @@ initGLStuff = do
   c <- withCString "vertexColor" $ glGetAttribLocation progId
   m <- withCString "MVP" $ glGetUniformLocation progId
   (vertexAttrib, colorAttrib, mvpMatrixUniform) <- if v < 0 || c < 0 || m < 0
-        then fail "One of the attribs/uniforms can't be found!"
+        then error "One of the attribs/uniforms can't be found!"
         else return (fromIntegral v, fromIntegral c, m)
   vertexArrayId <- withNewPtr (glGenVertexArrays 1)
   glBindVertexArray vertexArrayId

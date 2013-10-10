@@ -5,7 +5,7 @@ in vec3 vertexPosition_modelspace;
 in vec3 vertexColor;
 uniform mat4 MVP;
 
-varying vec3 fragmentColor;
+out vec3 fragmentColor;
 
 void main(){
 
