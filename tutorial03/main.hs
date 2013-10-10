@@ -120,12 +120,22 @@ vec3 x y z = x:.y:.z:.()
 
 mvpMatrix :: Mat44 GLfloat
 mvpMatrix = projection `multmm` view `multmm` model
-  where projection = perspective 0.1 100 (pi/2) (4/3)
-        view       = lookAt (vec3 0 1 0) (vec3 1 1 6) (vec3 0 0 0)
+  where projection = perspective 0.1 100 (pi/4) (4/3)
+        view       = lookAt (vec3 0 1 0) (vec3 4 3 3) (vec3 0 0 0)
         model      = identity
-        
+
+-- Data.Vec rotationLookAt does not work exactly like I want,
+-- temporary recoding
 lookAt :: Floating a => Vec3 a -> Vec3 a -> Vec3 a -> Mat44 a
-lookAt up' pos target = multmm (rotationLookAt up' pos target) (translation (-pos))
+lookAt up eye target = x :. y :. (-z) :. h :. ()
+  where
+   f = normalize $ target - eye
+   s = normalize $ f `cross` normalize up
+   u = s `cross` f
+   x = homVec s
+   y = homVec u
+   z = f `snoc` (-(f `dot` eye))
+   h = vec3 (-(s `dot` eye))  (-(u `dot` eye)) 0 `snoc` 1
 
 main = do
   let ?log = putStrLn
