@@ -89,10 +89,10 @@ fillNewBuffer list = do
 bindBufferToAttrib bufId attribLoc = do
   glEnableVertexAttribArray attribLoc
   glBindBuffer gl_ARRAY_BUFFER bufId
-  glVertexAttribPointer attribLoc  -- attribute 0 in the shader
+  glVertexAttribPointer attribLoc  -- attribute location in the shader
                         3  -- 3 components per vertex
                         gl_FLOAT  -- coordinates type
-                        (fromBool False)  -- normalized?
+                        (fromBool False)  -- normalize?
                         0  -- stride
                         nullPtr  -- vertex buffer offset
 
@@ -100,6 +100,7 @@ mainLoop GLIds{..} = fix $ \loop -> do
   glClear gl_COLOR_BUFFER_BIT
   glUseProgram progId
   with mvpMatrix $ glUniformMatrix4fv mvpMatrixUniform 1 (fromBool True) . castPtr
+                                                -- We are ROW-first ^^^
   bindBufferToAttrib vertexBufferId vertexAttrib
   bindBufferToAttrib colorBufferId colorAttrib
   glDrawArrays gl_TRIANGLES 0 3  -- from 0, 3 vertices
@@ -120,7 +121,7 @@ vec3 x y z = x:.y:.z:.()
 mvpMatrix :: Mat44 GLfloat
 mvpMatrix = projection `multmm` view `multmm` model
   where projection = perspective 0.1 100 (pi/2) (4/3)
-        view       = translation (vec3 1 1 (-4)) --lookAt (vec3 0 1 0) (vec3 1 1 3) (vec3 0 0 0)
+        view       = lookAt (vec3 0 1 0) (vec3 1 1 6) (vec3 0 0 0)
         model      = identity
         
 lookAt :: Floating a => Vec3 a -> Vec3 a -> Vec3 a -> Mat44 a
