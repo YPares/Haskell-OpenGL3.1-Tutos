@@ -50,19 +50,29 @@ loadProgram vertFP fragFP = do
   return progId
 
 data GLIds = GLIds { progId :: !GLuint, vertexArrayId :: !GLuint
-                   , vertexBufferId :: !GLuint, mvpMatrixUniform :: !GLint }
+                   , vertexBufferId :: !GLuint, colorBufferId :: !GLuint
+                   , mvpMatrixUniform :: !GLint
+                   , vertexAttrib :: !GLuint, colorAttrib :: !GLuint}
 
 initGLStuff = do
   glClearColor 0 0 0.4 0
   progId <- loadProgram "simple.vert" "simple.frag"
-  withCString "vertexPosition_modelspace" $ glBindAttribLocation progId 0
-  mvpMatrixUniform <- withCString "MVP" $ glGetUniformLocation progId
+  v <- withCString "vertexPosition_modelspace" $ glGetAttribLocation progId
+  c <- withCString "vertexColor" $ glGetAttribLocation progId
+  m <- withCString "MVP" $ glGetUniformLocation progId
+  (vertexAttrib, colorAttrib, mvpMatrixUniform) <- if v < 0 || c < 0 || m < 0
+        then fail "One of the attribs/uniforms can't be found!"
+        else return (fromIntegral v, fromIntegral c, m)
   vertexArrayId <- withNewPtr (glGenVertexArrays 1)
   glBindVertexArray vertexArrayId
   let vertexBufferData = [-1, -1, 0
                          , 1, -1, 0
                          , 0,  1, 0]
+      colorBufferData  = [1,0,0
+                         ,0,1,0
+                         ,0,0,1]
   vertexBufferId <- fillNewBuffer vertexBufferData
+  colorBufferId <- fillNewBuffer colorBufferData
   return GLIds{..}
 
 fillNewBuffer list = do
@@ -80,7 +90,7 @@ bindBufferToAttrib bufId attribLoc = do
   glEnableVertexAttribArray attribLoc
   glBindBuffer gl_ARRAY_BUFFER bufId
   glVertexAttribPointer attribLoc  -- attribute 0 in the shader
-                        3  -- we draw 3 vertices
+                        3  -- 3 components per vertex
                         gl_FLOAT  -- coordinates type
                         (fromBool False)  -- normalized?
                         0  -- stride
@@ -90,9 +100,11 @@ mainLoop GLIds{..} = fix $ \loop -> do
   glClear gl_COLOR_BUFFER_BIT
   glUseProgram progId
   with mvpMatrix $ glUniformMatrix4fv mvpMatrixUniform 1 (fromBool True) . castPtr
-  bindBufferToAttrib vertexBufferId 0
+  bindBufferToAttrib vertexBufferId vertexAttrib
+  bindBufferToAttrib colorBufferId colorAttrib
   glDrawArrays gl_TRIANGLES 0 3  -- from 0, 3 vertices
-  glDisableVertexAttribArray 0
+  glDisableVertexAttribArray colorAttrib
+  glDisableVertexAttribArray vertexAttrib
   W.swapBuffers
   continue <- W.windowIsOpen
               <&&> (not <$> W.keyIsPressed W.KeyEsc)
@@ -100,6 +112,7 @@ mainLoop GLIds{..} = fix $ \loop -> do
 
 cleanUpGLStuff GLIds{..} = do
   with vertexBufferId $ glDeleteBuffers 1
+  with colorBufferId $ glDeleteBuffers 1
   with vertexArrayId $ glDeleteVertexArrays 1
 
 vec3 x y z = x:.y:.z:.()
@@ -107,7 +120,7 @@ vec3 x y z = x:.y:.z:.()
 mvpMatrix :: Mat44 GLfloat
 mvpMatrix = projection `multmm` view `multmm` model
   where projection = perspective 0.1 100 (pi/2) (4/3)
-        view       = translation (vec3 1 1 (-3)) --lookAt (vec3 0 1 0) (vec3 1 1 3) (vec3 0 0 0)
+        view       = translation (vec3 1 1 (-4)) --lookAt (vec3 0 1 0) (vec3 1 1 3) (vec3 0 0 0)
         model      = identity
         
 lookAt :: Floating a => Vec3 a -> Vec3 a -> Vec3 a -> Mat44 a
