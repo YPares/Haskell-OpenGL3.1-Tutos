@@ -67,6 +67,9 @@ initGLStuff = do
   glBindVertexArray vertexArrayId
   glEnable gl_DEPTH_TEST
   glDepthFunc gl_LESS
+  -- Yeah, a cube takes an awful lot of triangles to be defined...
+  -- Dirty to stick it right in the middle of the code, but I like my tutos self-contained
+  -- (even if, yeah, I know, the shaders code is not in this file)
   let vertexBufferData = [-1.0,-1.0,-1.0, -- triangle 1 : begin
                         -1.0,-1.0, 1.0,
                         -1.0, 1.0, 1.0, -- triangle 1 : end
