@@ -182,6 +182,7 @@ mainLoop GLIds{..} = fix $ \loop -> do
               <&&> (not <$> W.keyIsPressed W.KeyEsc)
   when continue loop
 
+cleanUpGLStuff :: GLIds -> IO ()
 cleanUpGLStuff GLIds{..} = do
   with vertexBufferId $ glDeleteBuffers 1
   with colorBufferId $ glDeleteBuffers 1
@@ -208,14 +209,13 @@ lookAt up eye target = x :. y :. (-z) :. h :. ()
    z = f `snoc` (-(f `dot` eye))
    h = vec3 (-(s `dot` eye))  (-(u `dot` eye)) 0 `snoc` 1
 
+main :: IO ()
 main = do
   let ?log = putStrLn
       ?err = error
   W.initialize
   success <- W.openWindow $ W.defaultDisplayOptions
-    { W.displayOptions_numFsaaSamples = Just 4
-    , W.displayOptions_openGLVersion = (3, 1)}
-    --, W.displayOptions_openGLProfile = W.CoreProfile }
+    { W.displayOptions_numFsaaSamples = Just 4}
   when (not success) $ do
     W.terminate
     ?err "GLFW couldn't open a window."

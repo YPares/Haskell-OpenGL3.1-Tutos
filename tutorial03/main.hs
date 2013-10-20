@@ -142,9 +142,7 @@ main = do
       ?err = error
   W.initialize
   success <- W.openWindow $ W.defaultDisplayOptions
-    { W.displayOptions_numFsaaSamples = Just 4
-    , W.displayOptions_openGLVersion = (3, 1)}
-    --, W.displayOptions_openGLProfile = W.CoreProfile }
+    { W.displayOptions_numFsaaSamples = Just 4}
   when (not success) $ do
     W.terminate
     ?err "GLFW couldn't open a window."

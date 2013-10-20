@@ -1,4 +1,4 @@
-#version 140
+#version 130
 
 // Ouput data
 out vec3 color;
