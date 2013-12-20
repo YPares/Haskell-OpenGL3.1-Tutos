@@ -4,6 +4,9 @@ These tutorials are "loose" haskell ports of those available at http://www.openg
 
 "Loose", because :
 
-- They use OpenGL 3.1, instead of the original 3.3 (the laptop I'm using only has an Intel HD3000 chipset).
+- My ports use OpenGL 3.1, instead of the original 3.3 (the laptop I'm using only has an Intel HD3000 chipset).
 - When Haskell allows me to take shortcuts (i.e. reduce the verbosity), then I do take them.
-- I use the Haskell Vec library for the linear computations, not glm (it uses ROW-major matrices! Don't forget to tell OpenGL that, or you'll end up like me with nasty bugs).
+- I use the Haskell Vec library for the linear computations, not glm (Vec uses ROW-major matrices! Don't forget to tell OpenGL that, or you'll end up like me with nasty bugs).
+
+
+TODO: Code equivalent tutos using OpenGL (not Raw) + vinyl-gl?
